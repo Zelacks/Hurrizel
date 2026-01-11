@@ -40,7 +40,7 @@ public class AutoGiveButton extends Widget {
         this.rel = rel;
         if (gobid > 0 && this.rel.gobid == gobid) {
             this.state = 1;
-            rel.peace();
+            //rel.peace();
         } else {
             this.state = 0;
         }
@@ -71,22 +71,22 @@ public class AutoGiveButton extends Widget {
     @Override
     public boolean mousedown(MouseDownEvent ev) {
         this.state = ++this.state % 2;
-        if (this.state == 1)
+        /*if (this.state == 1)
             rel.peace();
         else{
             if (!OptWnd.autoPeaceAnimalsWhenCombatStartsCheckBox.a)
                 rel.give.wdgmsg("click", 1);
-        }
+        }*/
         return(true);
     }
 
     public void remoteTrigger(){ //there's probably a better way to click this from outside this class, but I'm dumb so this works instead. -Ard
         this.state = ++this.state %2;
-        if (this.state == 1)
+        /*if (this.state == 1)
             rel.peace();
         else{
             if (!OptWnd.autoPeaceAnimalsWhenCombatStartsCheckBox.a)
                 rel.give.wdgmsg("click", 1);
-        }
+        }*/
     }
 }
