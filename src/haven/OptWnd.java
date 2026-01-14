@@ -32,6 +32,7 @@ import haven.res.gfx.fx.msrad.MSRad;
 import haven.res.ui.pag.toggle.Toggle;
 import haven.resutil.Ridges;
 import haven.sprites.AggroCircleSprite;
+import haven.sprites.ChaseVectorSprite;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -1248,6 +1249,14 @@ public class OptWnd extends Window {
     public static HSlider targetSpriteSizeSlider;
     public static CheckBox drawChaseVectorsCheckBox;
     public static CheckBox drawYourCurrentPathCheckBox;
+
+    public static ColorOptionWidget yourselfVectorColorOptionWidget;
+    public static String[] yourselfVectorColorSetting = Utils.getprefsa("yourselfVector" + "_colorSetting", new String[]{"255", "255", "255", "255"});
+    public static ColorOptionWidget friendVectorColorOptionWidget;
+    public static String[] friendVectorColorSetting = Utils.getprefsa("friendVector" + "_colorSetting", new String[]{"47", "191", "7", "255"});
+    public static ColorOptionWidget enemyVectorColorOptionWidget;
+    public static String[] enemyVectorColorSetting = Utils.getprefsa("enemyVector" + "_colorSetting", new String[]{"255", "0", "0", "255"});
+
     public static CheckBox showYourCombatRangeCirclesCheckBox;
     public static boolean refreshMyUnarmedRange = false;
     public static boolean refreshMyWeaponRange = false;
@@ -1444,6 +1453,30 @@ public class OptWnd extends Window {
                 }
             }, leftColumn.pos("ur").adds(6, 0));
 
+            leftColumn = add(showYourCombatRangeCirclesCheckBox = new CheckBox("Show Your Combat Range Circles"){
+                {a = Utils.getprefb("showYourCombatRangeCircles", false);}
+                public void changed(boolean val) {
+                    Utils.setprefb("showYourCombatRangeCircles", val);
+                }
+            }, leftColumn.pos("bl").adds(0, 12).x(0));
+            showYourCombatRangeCirclesCheckBox.tooltip = showYourCombatRangeCirclesTooltip;
+            leftColumn = add(new Label("Unarmed"), leftColumn.pos("bl").adds(16, 1));
+            add(unarmedCombatRangeColorOptionWidget = new ColorOptionWidget("", "unarmedCombatRange", 0, Integer.parseInt(unarmedCombatRangeColorSetting[0]), Integer.parseInt(unarmedCombatRangeColorSetting[1]), Integer.parseInt(unarmedCombatRangeColorSetting[2]), Integer.parseInt(unarmedCombatRangeColorSetting[3]), (Color col) -> {
+                refreshMyUnarmedRange = true;
+            }){}, leftColumn.pos("bl").adds(12, 0));
+            leftColumn = add(new Label("Weapon"), leftColumn.pos("ur").adds(20, 0));
+            leftColumn = add(weaponCombatRangeColorOptionWidget = new ColorOptionWidget("", "weaponCombatRange", 0, Integer.parseInt(weaponCombatRangeColorSetting[0]), Integer.parseInt(weaponCombatRangeColorSetting[1]), Integer.parseInt(weaponCombatRangeColorSetting[2]), Integer.parseInt(weaponCombatRangeColorSetting[3]), (Color col) -> {
+                refreshMyWeaponRange = true;
+            }){}, leftColumn.pos("bl").adds(10, 0));
+            leftColumn = add(new Button(UI.scale(70), "Reset All", false).action(() -> {
+                Utils.setprefsa("unarmedCombatRange" + "_colorSetting", new String[]{"0", "160", "0", "255"});
+                Utils.setprefsa("weaponCombatRange" + "_colorSetting", new String[]{"130", "0", "172", "255"});
+                unarmedCombatRangeColorOptionWidget.cb.colorChooser.setColor(unarmedCombatRangeColorOptionWidget.currentColor = new Color(0, 160, 0, 255));
+                weaponCombatRangeColorOptionWidget.cb.colorChooser.setColor(weaponCombatRangeColorOptionWidget.currentColor = new Color(130, 0, 172, 255));
+                refreshMyUnarmedRange = true;
+                refreshMyWeaponRange = true;
+            }), leftColumn.pos("ur").adds(46, -2));
+
             rightColumn = add(showCombatOpeningsAsLettersCheckBox = new CheckBox("Show Combat Openings as Colored Letters"){
                 {a = Utils.getprefb("showCombatOpeningsAsLetters", false);}
                 public void changed(boolean val) {
@@ -1622,29 +1655,32 @@ public class OptWnd extends Window {
                 }
             }, rightColumn.pos("bl").adds(0, 2));
             drawYourCurrentPathCheckBox.tooltip = drawYourCurrentPathTooltip;
-            rightColumn = add(showYourCombatRangeCirclesCheckBox = new CheckBox("Show Your Combat Range Circles"){
-                {a = Utils.getprefb("showYourCombatRangeCircles", false);}
-                public void changed(boolean val) {
-                    Utils.setprefb("showYourCombatRangeCircles", val);
-                }
-            }, rightColumn.pos("bl").adds(0, 2));
-            showYourCombatRangeCirclesCheckBox.tooltip = showYourCombatRangeCirclesTooltip;
-            rightColumn = add(new Label("Unarmed"), rightColumn.pos("bl").adds(16, 1));
-            add(unarmedCombatRangeColorOptionWidget = new ColorOptionWidget("", "unarmedCombatRange", 0, Integer.parseInt(unarmedCombatRangeColorSetting[0]), Integer.parseInt(unarmedCombatRangeColorSetting[1]), Integer.parseInt(unarmedCombatRangeColorSetting[2]), Integer.parseInt(unarmedCombatRangeColorSetting[3]), (Color col) -> {
-                refreshMyUnarmedRange = true;
-            }){}, rightColumn.pos("bl").adds(12, 0));
-            rightColumn = add(new Label("Weapon"), rightColumn.pos("ur").adds(20, 0));
-            rightColumn = add(weaponCombatRangeColorOptionWidget = new ColorOptionWidget("", "weaponCombatRange", 0, Integer.parseInt(weaponCombatRangeColorSetting[0]), Integer.parseInt(weaponCombatRangeColorSetting[1]), Integer.parseInt(weaponCombatRangeColorSetting[2]), Integer.parseInt(weaponCombatRangeColorSetting[3]), (Color col) -> {
-                refreshMyWeaponRange = true;
-            }){}, rightColumn.pos("bl").adds(10, 0));
-            rightColumn = add(new Button(UI.scale(70), "Reset All", false).action(() -> {
-                Utils.setprefsa("unarmedCombatRange" + "_colorSetting", new String[]{"0", "160", "0", "255"});
-                Utils.setprefsa("weaponCombatRange" + "_colorSetting", new String[]{"130", "0", "172", "255"});
-                unarmedCombatRangeColorOptionWidget.cb.colorChooser.setColor(unarmedCombatRangeColorOptionWidget.currentColor = new Color(0, 160, 0, 255));
-                weaponCombatRangeColorOptionWidget.cb.colorChooser.setColor(weaponCombatRangeColorOptionWidget.currentColor = new Color(130, 0, 172, 255));
-                refreshMyUnarmedRange = true;
-                refreshMyWeaponRange = true;
-            }), rightColumn.pos("ur").adds(46, -2));
+            rightColumn = add(yourselfVectorColorOptionWidget = new ColorOptionWidget("Yourself (Vector Color):", "yourselfVector", 120, Integer.parseInt(yourselfVectorColorSetting[0]), Integer.parseInt(yourselfVectorColorSetting[1]), Integer.parseInt(yourselfVectorColorSetting[2]), Integer.parseInt(yourselfVectorColorSetting[3]), (Color col) -> {
+                ChaseVectorSprite.YOURCOLOR = col;
+            }){}, rightColumn.pos("bl").adds(6, 2));
+            add(new Button(UI.scale(70), "Reset", false).action(() -> {
+                Utils.setprefsa("yourselfVector" + "_colorSetting", new String[]{"255", "255", "255", "255"});
+                yourselfVectorColorOptionWidget.cb.colorChooser.setColor(yourselfVectorColorOptionWidget.currentColor = new Color(255, 255, 255, 255));
+                ChaseVectorSprite.YOURCOLOR = yourselfVectorColorOptionWidget.currentColor;
+            }), yourselfVectorColorOptionWidget.pos("ur").adds(16, 0)).tooltip = resetButtonTooltip;
+            rightColumn = add(friendVectorColorOptionWidget = new ColorOptionWidget("Friend (Vector Color):", "friendVector", 120, Integer.parseInt(friendVectorColorSetting[0]), Integer.parseInt(friendVectorColorSetting[1]), Integer.parseInt(friendVectorColorSetting[2]), Integer.parseInt(friendVectorColorSetting[3]), (Color col) -> {
+                ChaseVectorSprite.FRIENDCOLOR = col;
+            }){}, rightColumn.pos("bl").adds(0, 4));
+            add(new Button(UI.scale(70), "Reset", false).action(() -> {
+                Utils.setprefsa("friendVector" + "_colorSetting", new String[]{"47", "191", "7", "255"});
+                friendVectorColorOptionWidget.cb.colorChooser.setColor(friendVectorColorOptionWidget.currentColor = new Color(47, 191, 7, 255));
+                ChaseVectorSprite.FRIENDCOLOR = friendVectorColorOptionWidget.currentColor;
+            }), friendVectorColorOptionWidget.pos("ur").adds(16, 0)).tooltip = resetButtonTooltip;
+
+            rightColumn = add(enemyVectorColorOptionWidget = new ColorOptionWidget("Enemy (Vector Color):", "enemyVector", 120, Integer.parseInt(enemyVectorColorSetting[0]), Integer.parseInt(enemyVectorColorSetting[1]), Integer.parseInt(enemyVectorColorSetting[2]), Integer.parseInt(enemyVectorColorSetting[3]), (Color col) -> {
+                ChaseVectorSprite.ENEMYCOLOR = col;
+            }){}, rightColumn.pos("bl").adds(0, 4));
+            add(new Button(UI.scale(70), "Reset", false).action(() -> {
+                Utils.setprefsa("enemyVector" + "_colorSetting", new String[]{"255", "0", "0", "255"});
+                enemyVectorColorOptionWidget.cb.colorChooser.setColor(enemyVectorColorOptionWidget.currentColor = new Color(255, 0, 0, 255));
+                ChaseVectorSprite.ENEMYCOLOR = enemyVectorColorOptionWidget.currentColor;
+            }), enemyVectorColorOptionWidget.pos("ur").adds(16, 0)).tooltip = resetButtonTooltip;
+
 
 
             Widget backButton;
@@ -4995,12 +5031,7 @@ public class OptWnd extends Window {
     private static final Object showCirclesUnderCombatFoesTooltip = RichText.render("This will put a colored circle under all enemies that you are currently in combat with.", UI.scale(300));
     private static final Object targetSpriteTooltip = RichText.render("The target sprite uses the same color you set for Combat Foes.", UI.scale(300));
     private static final Object drawChaseVectorsTooltip = RichText.render("If this setting is enabled, colored lines will be drawn between chasers and chased targets." +
-            "\n=====================" +
-            "\n$col[255,255,255]{White: }You are the chaser." +
-            "\n$col[0,160,0]{Green: }A party member is the chaser." +
-            "\n$col[185,0,0]{Red: }A player is chasing you or a party member." +
-            "\n$col[165,165,165]{Gray: }An animal is the chaser, OR random (non-party) players are chasing each other." +
-            "\n=====================" +
+			"\n" +
             "\n$col[218,163,0]{Note:} $col[185,185,185]{Chase vectors include queuing attacks, clicking a critter to pick up, or simply following someone.}" +
             "\n$col[218,163,0]{Disclaimer:} $col[185,185,185]{Chase vectors sometimes don't show when chasing a critter that is standing still. The client treats this as something else for some reason and I can't fix it.}", UI.scale(430));
     private static final Object drawYourCurrentPathTooltip = RichText.render("When this is enabled, a straight line will be drawn between your character and wherever you clicked" +

@@ -44,6 +44,7 @@ import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
 import haven.render.sl.Type;
 import haven.res.ui.obj.buddy.Buddy;
+import haven.sprites.ChaseVectorSprite;
 
 public class MapView extends PView implements DTarget, Console.Directory, PFListener {
     public static boolean clickdb = false;
@@ -984,7 +985,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 			if (ui.gprefs.rscale.val > 1.99f)
 				w = 3f;
 		}
-		return gridmat = new Material(new BaseColor(255, 255, 255, 96), States.maskdepth, new MapMesh.OLOrder(null),
+		return gridmat = new Material(new BaseColor(255, 255, 255, 48), States.maskdepth, new MapMesh.OLOrder(null),
 				new States.LineWidth(w),
 				Location.xlate(new Coord3f(0, 0, 0.5f))   /* Apparently, there is no depth bias for lines. :P */
 		);
@@ -1843,7 +1844,7 @@ public class MapView extends PView implements DTarget, Console.Directory, PFList
 				if (playerc != null && clickc != null) {
 					g.chcolor(Color.BLACK);
 					g.line(playerc, clickc, 4);
-					g.chcolor(Color.WHITE);
+					g.chcolor(ChaseVectorSprite.YOURCOLOR);
 					g.line(playerc, clickc, 2);
 				}
 			}
