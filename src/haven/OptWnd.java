@@ -424,12 +424,14 @@ public class OptWnd extends Window {
     public static HSlider clapSoundVolumeSlider;
     public static HSlider quernSoundVolumeSlider;
     public static HSlider swooshSoundVolumeSlider;
+    public static HSlider grammophoneHatSoundVolumeSlider;
     public static HSlider cauldronSoundVolumeSlider;
     public static HSlider squeakSoundVolumeSlider;
     public static HSlider butcherSoundVolumeSlider;
     public static HSlider whiteDuckCapSoundVolumeSlider;
     public static HSlider chippingSoundVolumeSlider;
     public static HSlider miningSoundVolumeSlider;
+    public static HSlider doomBellCapSoundVolumeSlider;
     private final int audioSliderWidth = 220;
     public static HSlider themeSongVolumeSlider;
 
@@ -549,13 +551,14 @@ public class OptWnd extends Window {
 
             leftColumn = add(new Label("Other Sound Settings"), leftColumn.pos("bl").adds(177, 20));
 
-            leftColumn = add(new Label("Boiling Cauldron Volume (Requires Reload)"), leftColumn.pos("bl").adds(0, 5).x(0));
+		leftColumn = add(new Label("Boiling Cauldron Volume"), leftColumn.pos("bl").adds(0, 5).x(0));
             leftColumn = add(cauldronSoundVolumeSlider = new HSlider(UI.scale(audioSliderWidth), 0, 100, Utils.getprefi("cauldronSoundVolume", 25)) {
                 protected void attach(UI ui) {
                     super.attach(ui);
                 }
                 public void changed() {
                     Utils.setprefi("cauldronSoundVolume", val);
+
                 }
             }, leftColumn.pos("bl").adds(0, 2));
 
@@ -595,7 +598,16 @@ public class OptWnd extends Window {
                     super.attach(ui);
                 }
                 public void changed() {
-                    Utils.setprefi("quernSoundVolume", val);
+                Utils.setprefi("swooshSoundVolume", val);
+            }
+        }, leftColumn.pos("bl").adds(0, 2));
+        leftColumn = add(new Label("Grammophone Hat Sound Volume"), leftColumn.pos("bl").adds(0, 5).x(0));
+        leftColumn = add(grammophoneHatSoundVolumeSlider = new HSlider(UI.scale(audioSliderWidth), 0, 100, Utils.getprefi("grammophoneHatSoundVolume", 100)) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+            }
+            public void changed() {
+                Utils.setprefi("grammophoneHatSoundVolume", val);
                 }
             }, leftColumn.pos("bl").adds(0, 2));
 
@@ -646,6 +658,16 @@ public class OptWnd extends Window {
                 }
                 public void changed() {
                     Utils.setprefi("miningSoundVolume", val);
+            }
+        }, rightColumn.pos("bl").adds(0, 2));
+
+        rightColumn = add(new Label("Doom Bell Cap Sound Volume"), rightColumn.pos("bl").adds(0, 5));
+        rightColumn = add(doomBellCapSoundVolumeSlider = new HSlider(UI.scale(audioSliderWidth), 0, 100, Utils.getprefi("doomBellCapSoundVolume", 75)) {
+            protected void attach(UI ui) {
+                super.attach(ui);
+            }
+            public void changed() {
+                Utils.setprefi("doomBellCapSoundVolume", val);
                 }
             }, rightColumn.pos("bl").adds(0, 2));
 
@@ -979,7 +1001,7 @@ public class OptWnd extends Window {
             expWindowLocationLabel.tooltip = experienceWindowLocationTooltip;
 
             rightColumn = add(new Label("Map Window Zoom Speed:"), rightColumn.pos("bl").adds(0, 10).x(UI.scale(230)));
-            rightColumn = add(mapZoomSpeedSlider = new HSlider(UI.scale(110), 10, 30, Utils.getprefi("mapZoomSpeed", 15)) {
+		rightColumn = add(mapZoomSpeedSlider = new HSlider(UI.scale(110), 10, 50, Utils.getprefi("mapZoomSpeed", 15)) {
                 public void changed() {
                     Utils.setprefi("mapZoomSpeed", val);
                 }
@@ -1221,6 +1243,7 @@ public class OptWnd extends Window {
     public static CheckBox drawFloatingCombatDataOnOthersCheckBox;
     public static CheckBox showCombatManeuverCombatInfoCheckBox;
     public static CheckBox onlyShowOpeningsAbovePercentageCombatInfoCheckBox;
+    public static CheckBox includeCurrentTargetShowOpeningsAbovePercentageCombatInfoCheckBox;
     public static CheckBox onlyShowCoinsAbove4CombatInfoCheckBox;
     public static CheckBox drawFloatingCombatOpeningsAboveYourselfCheckBox;
     public static TextEntry minimumOpeningTextEntry;
@@ -1402,6 +1425,12 @@ public class OptWnd extends Window {
                     super.changed();
                 }
             }, leftColumn.pos("ur").adds(10, 0));
+            leftColumn = add(includeCurrentTargetShowOpeningsAbovePercentageCombatInfoCheckBox = new CheckBox("Include Current Target"){
+                {a = Utils.getprefb("includeCurrentTargetShowOpeningsAbovePercentage", false);}
+                public void changed(boolean val) {
+                    Utils.setprefb("includeCurrentTargetShowOpeningsAbovePercentage", val);
+                }
+            }, leftColumn.pos("bl").adds(20, 4));
             add(new Label(" >"), leftColumn.pos("bl").adds(0, 2).xs(0));
 
             leftColumn = add(onlyShowCoinsAbove4CombatInfoCheckBox = new CheckBox("Only show coins when higher than 4"){
@@ -1409,7 +1438,7 @@ public class OptWnd extends Window {
                 public void changed(boolean val) {
                     Utils.setprefb("onlyShowCoinsAbove4", val);
                 }
-            }, leftColumn.pos("bl").adds(0, 2));
+			}, leftColumn.pos("bl").adds(0, 2).xs(20));
 
             leftColumn = add(toggleGobDamageInfoCheckBox = new CheckBox("Display Damage Info:"){
                 {a = Utils.getprefb("GobDamageInfoToggled", true);}
@@ -3037,6 +3066,7 @@ public class OptWnd extends Window {
     public static CheckBox enableQueuedMovementCheckBox;
     public static CheckBox walkWithPathFinderCheckBox;
     public static CheckBox drawPathfinderRouteCheckBox;
+    public static CheckBox autoRejectBandyCheckBox;
 
     public class GameplayAutomationSettingsPanel extends Panel {
 
@@ -3279,6 +3309,18 @@ public class OptWnd extends Window {
                     Utils.setprefb("drawPathfinderRoute", val);
                 }
             }, prev.pos("bl").adds(12, 2));
+
+            prev = add(autoRejectBandyCheckBox = new CheckBox("Auto-Reject Bandy"){
+                {a = Utils.getprefb("autoRejectBandy", false);}
+                public void set(boolean val) {
+                    Utils.setprefb("autoRejectBandy", val);
+                    a = val;
+                    if (ui != null && ui.gui != null) {
+                        ui.gui.optionInfoMsg("Auto-Reject Bandy is now " + (val ? "ENABLED" : "DISABLED") + ".", (val ? msgGreen : msgRed), Audio.resclip(val ? Toggle.sfxon : Toggle.sfxoff));
+                    }
+                }
+            }, prev.pos("bl").adds(0, 12).x(0));
+            autoRejectBandyCheckBox.tooltip = autoRejectBandyTooltip;
 
             Widget backButton;
             add(backButton = new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18));
@@ -5178,6 +5220,11 @@ public class OptWnd extends Window {
     private static final Object walkWithPathfinderTooltip = RichText.render("You can use this to walk and avoid possible obstacles, for example, in your base. It's not perfect, and doesn't work with cliffs though." +
             "\n" +
             "\n$col[218,163,0]{Action Button:} $col[185,185,185]{This setting can also be turned on/off using an action button from the menu grid (Custom Client Extras → Toggles).}", UI.scale(300));
+    private static final Object autoRejectBandyTooltip = RichText.render("Use this to instantly close the Bandy Window the moment it's created." +
+            "\n$col[185,185,185]{This saves you from Bandy Critter Bomb Scripts.}" +
+            "\n" +
+            "\n$col[218,163,0]{Action Button:} $col[185,185,185]{This setting can also be turned on/off using an action button from the menu grid (Custom Client Extras → Toggles).}", UI.scale(300));
+
 
     // Altered Gameplay Settings Tooltips
     private static final Object overrideCursorItemWhenHoldingAltTooltip = RichText.render("Holding Alt while having an item on your cursor will allow you to left click to walk, or right click to interact with objects, rather than drop it on the ground." +
