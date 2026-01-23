@@ -33,6 +33,7 @@ import haven.res.ui.pag.toggle.Toggle;
 import haven.resutil.Ridges;
 import haven.sprites.AggroCircleSprite;
 import haven.sprites.ChaseVectorSprite;
+import haven.sprites.PartyCircleSprite;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -1575,8 +1576,9 @@ public class OptWnd extends Window {
                 {a = Utils.getprefb("highlightPartyMembers", false);}
                 public void changed(boolean val) {
                     Utils.setprefb("highlightPartyMembers", val);
-                    if (ui != null && ui.gui != null && ui.gui.map != null && ui.gui.map.partyHighlight != null)
-                        ui.gui.map.partyHighlight.update();
+                    if (ui != null && ui.gui != null) {
+                        ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                    }
                 }
             }, rightColumn.pos("bl").adds(0, 16).xs(320));
             highlightPartyMembersCheckBox.tooltip = highlightPartyMembersTooltip;
@@ -1584,41 +1586,66 @@ public class OptWnd extends Window {
                 {a = Utils.getprefb("showCirclesUnderPartyMembers", true);}
                 public void changed(boolean val) {
                     Utils.setprefb("showCirclesUnderPartyMembers", val);
-                    if (ui != null && ui.gui != null && ui.gui.map != null && ui.gui.map.partyCircles != null)
-                        ui.gui.map.partyCircles.update();
+                    if (ui != null && ui.gui != null) {
+                        ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    }
                 }
             }, rightColumn.pos("bl").adds(0, 2));
             showCirclesUnderPartyMembersCheckBox.tooltip = showCirclesUnderPartyMembersTooltip;
 
             rightColumn = add(yourselfPartyColorOptionWidget = new ColorOptionWidget("Yourself (Party Color):", "yourselfParty", 120, Integer.parseInt(yourselfPartyColorSetting[0]), Integer.parseInt(yourselfPartyColorSetting[1]), Integer.parseInt(yourselfPartyColorSetting[2]), Integer.parseInt(yourselfPartyColorSetting[3]), (Color col) -> {
-                PartyHighlight.YOURSELF_OL_COLOR = col;
-                PartyCircles.YOURSELF_OL_COLOR = col;
+                GobPartyHighlight.YOURSELF_OL_COLOR = new MixColor(col);
+                PartyCircleSprite.YOURSELF_OL_COLOR = col;
+                if (ui != null && ui.gui != null) {
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                }
             }){}, rightColumn.pos("bl").adds(6, 2));
             add(new Button(UI.scale(70), "Reset", false).action(() -> {
                 Utils.setprefsa("yourselfParty" + "_colorSetting", new String[]{"255", "255", "255", "128"});
                 yourselfPartyColorOptionWidget.cb.colorChooser.setColor(yourselfPartyColorOptionWidget.currentColor = new Color(255, 255, 255, 128));
-                PartyHighlight.YOURSELF_OL_COLOR = yourselfPartyColorOptionWidget.currentColor;
-                PartyCircles.YOURSELF_OL_COLOR = yourselfPartyColorOptionWidget.currentColor;
+                GobPartyHighlight.YOURSELF_OL_COLOR = new MixColor(yourselfPartyColorOptionWidget.currentColor);
+                PartyCircleSprite.YOURSELF_OL_COLOR = yourselfPartyColorOptionWidget.currentColor;
+                if (ui != null && ui.gui != null) {
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                }
             }), yourselfPartyColorOptionWidget.pos("ur").adds(16, 0)).tooltip = resetButtonTooltip;
             rightColumn = add(leaderPartyColorOptionWidget = new ColorOptionWidget("Leader (Party Color):", "leaderParty", 120, Integer.parseInt(leaderPartyColorSetting[0]), Integer.parseInt(leaderPartyColorSetting[1]), Integer.parseInt(leaderPartyColorSetting[2]), Integer.parseInt(leaderPartyColorSetting[3]), (Color col) -> {
-                PartyHighlight.LEADER_OL_COLOR = col;
-                PartyCircles.LEADER_OL_COLOR = col;
+                GobPartyHighlight.LEADER_OL_COLOR = new MixColor(col);
+                PartyCircleSprite.LEADER_OL_COLOR = col;
+                if (ui != null && ui.gui != null) {
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                }
             }){}, rightColumn.pos("bl").adds(0, 4));
             add(new Button(UI.scale(70), "Reset", false).action(() -> {
                 Utils.setprefsa("leaderParty" + "_colorSetting", new String[]{"0", "74", "208", "164"});
                 leaderPartyColorOptionWidget.cb.colorChooser.setColor(leaderPartyColorOptionWidget.currentColor = new Color(0, 74, 208, 164));
-                PartyHighlight.LEADER_OL_COLOR = leaderPartyColorOptionWidget.currentColor;
-                PartyCircles.LEADER_OL_COLOR = leaderPartyColorOptionWidget.currentColor;
+                GobPartyHighlight.LEADER_OL_COLOR = new MixColor(leaderPartyColorOptionWidget.currentColor);
+                PartyCircleSprite.LEADER_OL_COLOR = leaderPartyColorOptionWidget.currentColor;
+                if (ui != null && ui.gui != null) {
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                }
             }), leaderPartyColorOptionWidget.pos("ur").adds(16, 0)).tooltip = resetButtonTooltip;
             rightColumn = add(memberPartyColorOptionWidget = new ColorOptionWidget("Member (Party Color):", "memberParty", 120, Integer.parseInt(memberPartyColorSetting[0]), Integer.parseInt(memberPartyColorSetting[1]), Integer.parseInt(memberPartyColorSetting[2]), Integer.parseInt(memberPartyColorSetting[3]), (Color col) -> {
-                PartyHighlight.MEMBER_OL_COLOR = col;
-                PartyCircles.MEMBER_OL_COLOR = col;
+                GobPartyHighlight.MEMBER_OL_COLOR = new MixColor(col);
+                PartyCircleSprite.MEMBER_OL_COLOR = col;
+                if (ui != null && ui.gui != null) {
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                }
             }){}, rightColumn.pos("bl").adds(0, 4));
             add(new Button(UI.scale(70), "Reset", false).action(() -> {
                 Utils.setprefsa("memberParty" + "_colorSetting", new String[]{"0", "160", "0", "164"});
                 memberPartyColorOptionWidget.cb.colorChooser.setColor(memberPartyColorOptionWidget.currentColor = new Color(0, 160, 0, 164));
-                PartyHighlight.MEMBER_OL_COLOR = memberPartyColorOptionWidget.currentColor;
-                PartyCircles.MEMBER_OL_COLOR = memberPartyColorOptionWidget.currentColor;
+                GobPartyHighlight.MEMBER_OL_COLOR = new MixColor(memberPartyColorOptionWidget.currentColor);
+                PartyCircleSprite.MEMBER_OL_COLOR = memberPartyColorOptionWidget.currentColor;
+                if (ui != null && ui.gui != null) {
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyCircleOverlay);
+                    ui.sess.glob.oc.gobAction(Gob::updatePartyHighlightOverlay);
+                }
             }), memberPartyColorOptionWidget.pos("ur").adds(16, 0)).tooltip = resetButtonTooltip;
 
             rightColumn = add(highlightCombatFoesCheckBox = new CheckBox("Highlight Combat Foes"){
@@ -3066,7 +3093,6 @@ public class OptWnd extends Window {
     public static CheckBox enableQueuedMovementCheckBox;
     public static CheckBox walkWithPathFinderCheckBox;
     public static CheckBox drawPathfinderRouteCheckBox;
-    public static CheckBox autoRejectBandyCheckBox;
 
     public class GameplayAutomationSettingsPanel extends Panel {
 
@@ -3309,18 +3335,6 @@ public class OptWnd extends Window {
                     Utils.setprefb("drawPathfinderRoute", val);
                 }
             }, prev.pos("bl").adds(12, 2));
-
-            prev = add(autoRejectBandyCheckBox = new CheckBox("Auto-Reject Bandy"){
-                {a = Utils.getprefb("autoRejectBandy", false);}
-                public void set(boolean val) {
-                    Utils.setprefb("autoRejectBandy", val);
-                    a = val;
-                    if (ui != null && ui.gui != null) {
-                        ui.gui.optionInfoMsg("Auto-Reject Bandy is now " + (val ? "ENABLED" : "DISABLED") + ".", (val ? msgGreen : msgRed), Audio.resclip(val ? Toggle.sfxon : Toggle.sfxoff));
-                    }
-                }
-            }, prev.pos("bl").adds(0, 12).x(0));
-            autoRejectBandyCheckBox.tooltip = autoRejectBandyTooltip;
 
             Widget backButton;
             add(backButton = new PButton(UI.scale(200), "Back", 27, back, "Advanced Settings"), prev.pos("bl").adds(0, 18));
@@ -5220,11 +5234,6 @@ public class OptWnd extends Window {
     private static final Object walkWithPathfinderTooltip = RichText.render("You can use this to walk and avoid possible obstacles, for example, in your base. It's not perfect, and doesn't work with cliffs though." +
             "\n" +
             "\n$col[218,163,0]{Action Button:} $col[185,185,185]{This setting can also be turned on/off using an action button from the menu grid (Custom Client Extras → Toggles).}", UI.scale(300));
-    private static final Object autoRejectBandyTooltip = RichText.render("Use this to instantly close the Bandy Window the moment it's created." +
-            "\n$col[185,185,185]{This saves you from Bandy Critter Bomb Scripts.}" +
-            "\n" +
-            "\n$col[218,163,0]{Action Button:} $col[185,185,185]{This setting can also be turned on/off using an action button from the menu grid (Custom Client Extras → Toggles).}", UI.scale(300));
-
 
     // Altered Gameplay Settings Tooltips
     private static final Object overrideCursorItemWhenHoldingAltTooltip = RichText.render("Holding Alt while having an item on your cursor will allow you to left click to walk, or right click to interact with objects, rather than drop it on the ground." +
