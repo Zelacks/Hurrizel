@@ -1301,7 +1301,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 		Iterator<String> iter = poses.iterator();
 		while (iter.hasNext()) { // ND: Some animals have stupid names for the knock or dead pose, like "chicken-knock". Doing it this way is easier than manually adding every single one.
 			String s = iter.next();
-			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead") || s.contains("banzai")) {
+			if (s.contains("knock") || s.contains("dead") || s.contains("waterdead") || s.contains("banzai") || s.contains("carried")) {
 				knocked = true;
 				break;
 			} else {
@@ -1531,7 +1531,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 			} else if (OptWnd.hideStockpilesCheckbox.a && resName.startsWith("gfx/terobjs/stockpile")) {
 				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = true;
-			} else if (OptWnd.hideCropsCheckbox.a && resName.startsWith("gfx/terobjs/plants") && !resName.endsWith("trellis")) {
+			} else if (OptWnd.hideCropsCheckbox.a && resName.startsWith("gfx/terobjs/plants") && !resName.endsWith("trellis") && !resName.endsWith("giantturnip")) {
 				doHide = OptWnd.toggleGobHidingCheckBox.a;
 				doShowHidingBox = false; // ND: You can walk through them anyway, so it doesn't matter. Their resource doesn't have an actual hitbox layer and we'll have an endless lag loop of trying to draw one.
 			} else if (OptWnd.hideTrellisCheckbox.a && resName.endsWith("trellis")) {

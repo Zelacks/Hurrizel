@@ -40,7 +40,7 @@ public class Config {
     public static final String confid = "Hurricane";
     public static final Variable<Boolean> par = Variable.def(() -> true);
     public final Properties localprops = getlocalprops();
-	public static final String clientVersion = "v1.48b";
+	public static final String clientVersion = "v1.49";
 	public static String githubLatestVersion = "Loading...";
 
     private static Config global = null;
@@ -450,7 +450,8 @@ public class Config {
 			"gfx/kritter/rat/caverat",
 			"gfx/kritter/goat/wildgoat",
 			"gfx/kritter/cavelouse/cavelouse",
-            "gfx/kritter/goshawk/goshawk"
+            "gfx/kritter/goshawk/goshawk",
+            "gfx/kritter/narwhal/narwhal"
 	};
 
 	public static final String[] housesResPaths = {
